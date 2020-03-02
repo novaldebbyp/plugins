@@ -29,8 +29,8 @@ class AndroidWebView implements WebViewPlatform {
     assert(webViewPlatformCallbacksHandler != null);
     if (gestureRecognizers == null) {
       gestureRecognizers = <Factory<OneSequenceGestureRecognizer>>[
-        new Factory<OneSequenceGestureRecognizer>(
-          () => new EagerGestureRecognizer(),
+        Factory<OneSequenceGestureRecognizer>(
+          () => EagerGestureRecognizer(),
         ),
       ].toSet();
     }
