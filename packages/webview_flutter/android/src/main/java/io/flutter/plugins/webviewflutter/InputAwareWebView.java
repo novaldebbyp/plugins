@@ -7,21 +7,19 @@ package io.flutter.plugins.webviewflutter;
 import static android.content.Context.INPUT_METHOD_SERVICE;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Build;
 import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
-import android.widget.AbsListView;
 import android.widget.AbsoluteLayout;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -200,6 +198,16 @@ final class InputAwareWebView extends WebView {
         });
   }
 
+  @Override
+  public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
+    InputConnection connection = super.onCreateInputConnection(outAttrs);
+    if (connection == null) {
+      InputMethodManager imm = (InputMethodManager) getContext().getSystemService(INPUT_METHOD_SERVICE);
+      imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+    return super.onCreateInputConnection(outAttrs);
+  }
+
 
   MotionEvent ev;
 
@@ -251,7 +259,7 @@ final class InputAwareWebView extends WebView {
               callback.onActionItemClicked(actionMode, menu);
           }
       });
-      // 最多支持4个
+      // supports up to 4
       if (i >= 4) break;
     }
 
