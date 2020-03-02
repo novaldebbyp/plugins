@@ -265,17 +265,20 @@ final class InputAwareWebView extends WebView {
 
     final int x = (int) ev.getX();
     final int y = (int) ev.getY();
-    floatingActionView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-      @Override
-      public void onGlobalLayout() {
-          if (Build.VERSION.SDK_INT >= 16) {
-              floatingActionView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-          } else {
-              floatingActionView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-          }
-          onFloatingActionGlobalLayout(x, y);
-      }
-    });
+    floatingActionView
+        .getViewTreeObserver()
+        .addOnGlobalLayoutListener(
+            new ViewTreeObserver.OnGlobalLayoutListener() {
+              @Override
+              public void onGlobalLayout() {
+                if (Build.VERSION.SDK_INT >= 16) {
+                  floatingActionView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                } else {
+                  floatingActionView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                }
+                onFloatingActionGlobalLayout(x, y);
+              }
+            });
     this.addView(floatingActionView, new AbsoluteLayout.LayoutParams(-2, -2, x, y));
     actionMode.getMenu().clear();
     return actionMode;
@@ -297,7 +300,9 @@ final class InputAwareWebView extends WebView {
       cury = y - height - 10;
     }
 
-    InputAwareWebView.this.updateViewLayout(floatingActionView, new AbsoluteLayout.LayoutParams(-2, -2, curx, cury + InputAwareWebView.this.getScrollY()));
+    InputAwareWebView.this.updateViewLayout(
+        floatingActionView,
+        new AbsoluteLayout.LayoutParams(-2, -2, curx, cury + InputAwareWebView.this.getScrollY()));
     floatingActionView.setAlpha(1);
   }
 }
