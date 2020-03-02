@@ -27,6 +27,13 @@ class AndroidWebView implements WebViewPlatform {
     Set<Factory<OneSequenceGestureRecognizer>> gestureRecognizers,
   }) {
     assert(webViewPlatformCallbacksHandler != null);
+    if (gestureRecognizers == null) {
+      gestureRecognizers = <Factory<OneSequenceGestureRecognizer>>[
+        new Factory<OneSequenceGestureRecognizer>(
+          () => new EagerGestureRecognizer(),
+        ),
+      ].toSet();
+    }
     return GestureDetector(
       // We prevent text selection by intercepting the long press event.
       // This is a temporary stop gap due to issues with text selection on Android:
@@ -46,8 +53,7 @@ class AndroidWebView implements WebViewPlatform {
           onWebViewPlatformCreated(MethodChannelWebViewPlatform(
               id, webViewPlatformCallbacksHandler));
         },
-        gestureRecognizers:
-            gestureRecognizers ?? {Factory(() => EagerGestureRecognizer())},
+        gestureRecognizers: gestureRecognizers,
         // WebView content is not affected by the Android view's layout direction,
         // we explicitly set it here so that the widget doesn't require an ambient
         // directionality.
