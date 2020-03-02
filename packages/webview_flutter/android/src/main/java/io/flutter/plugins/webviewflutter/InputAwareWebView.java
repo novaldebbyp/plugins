@@ -70,9 +70,7 @@ final class InputAwareWebView extends WebView {
     proxyAdapterView.setLocked(true);
   }
 
-  /**
-   * Sets the proxy adapter view back to its default behavior.
-   */
+  /** Sets the proxy adapter view back to its default behavior. */
   void unlockInputConnection() {
     if (proxyAdapterView == null) {
       return;
@@ -81,9 +79,7 @@ final class InputAwareWebView extends WebView {
     proxyAdapterView.setLocked(false);
   }
 
-  /**
-   * Restore the original InputConnection, if needed.
-   */
+  /** Restore the original InputConnection, if needed. */
   void dispose() {
     resetInputConnection();
   }
@@ -206,12 +202,12 @@ final class InputAwareWebView extends WebView {
   public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
     InputConnection connection = super.onCreateInputConnection(outAttrs);
     if (connection == null && containerView != null) {
-      InputMethodManager imm = (InputMethodManager) getContext().getSystemService(INPUT_METHOD_SERVICE);
+      InputMethodManager imm =
+          (InputMethodManager) getContext().getSystemService(INPUT_METHOD_SERVICE);
       imm.hideSoftInputFromWindow(containerView.getWindowToken(), 0);
     }
     return super.onCreateInputConnection(outAttrs);
   }
-
 
   MotionEvent ev;
 
