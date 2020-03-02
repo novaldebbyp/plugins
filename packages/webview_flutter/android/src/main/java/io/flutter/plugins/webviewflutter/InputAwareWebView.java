@@ -70,7 +70,9 @@ final class InputAwareWebView extends WebView {
     proxyAdapterView.setLocked(true);
   }
 
-  /** Sets the proxy adapter view back to its default behavior. */
+  /**
+   * Sets the proxy adapter view back to its default behavior.
+   */
   void unlockInputConnection() {
     if (proxyAdapterView == null) {
       return;
@@ -79,7 +81,9 @@ final class InputAwareWebView extends WebView {
     proxyAdapterView.setLocked(false);
   }
 
-  /** Restore the original InputConnection, if needed. */
+  /**
+   * Restore the original InputConnection, if needed.
+   */
   void dispose() {
     resetInputConnection();
   }
@@ -201,9 +205,9 @@ final class InputAwareWebView extends WebView {
   @Override
   public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
     InputConnection connection = super.onCreateInputConnection(outAttrs);
-    if (connection == null) {
+    if (connection == null && containerView != null) {
       InputMethodManager imm = (InputMethodManager) getContext().getSystemService(INPUT_METHOD_SERVICE);
-      imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+      imm.hideSoftInputFromWindow(containerView.getWindowToken(), 0);
     }
     return super.onCreateInputConnection(outAttrs);
   }
@@ -213,28 +217,28 @@ final class InputAwareWebView extends WebView {
 
   @Override
   public boolean dispatchTouchEvent(MotionEvent ev) {
-      this.ev = ev;
-      return super.dispatchTouchEvent(ev);
+    this.ev = ev;
+    return super.dispatchTouchEvent(ev);
   }
 
   @Override
   public boolean onTouchEvent(MotionEvent event) {
-      if (event.getAction() == MotionEvent.ACTION_DOWN && floatingActionView != null) {
-          this.removeView(floatingActionView);
-          floatingActionView = null;
-      }
-      return super.onTouchEvent(event);
+    if (event.getAction() == MotionEvent.ACTION_DOWN && floatingActionView != null) {
+      this.removeView(floatingActionView);
+      floatingActionView = null;
+    }
+    return super.onTouchEvent(event);
   }
 
   @Override
   public ActionMode startActionMode(ActionMode.Callback callback) {
-      return rebuildActionMode(super.startActionMode(callback), callback);
+    return rebuildActionMode(super.startActionMode(callback), callback);
   }
 
 
   @Override
   public ActionMode startActionMode(ActionMode.Callback callback, int type) {
-      return rebuildActionMode(super.startActionMode(callback, type), callback);
+    return rebuildActionMode(super.startActionMode(callback, type), callback);
   }
 
 
@@ -252,12 +256,12 @@ final class InputAwareWebView extends WebView {
       text.setText(menu.getTitle());
       floatingActionView.addView(text);
       text.setOnClickListener(new OnClickListener() {
-          @Override
-          public void onClick(View view) {
-              InputAwareWebView.this.removeView(floatingActionView);
-              floatingActionView = null;
-              callback.onActionItemClicked(actionMode, menu);
-          }
+        @Override
+        public void onClick(View view) {
+          InputAwareWebView.this.removeView(floatingActionView);
+          floatingActionView = null;
+          callback.onActionItemClicked(actionMode, menu);
+        }
       });
       // supports up to 4
       if (i >= 4) break;
