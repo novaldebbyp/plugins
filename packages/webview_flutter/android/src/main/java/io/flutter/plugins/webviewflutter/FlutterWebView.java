@@ -6,12 +6,20 @@ package io.flutter.plugins.webviewflutter;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.display.DisplayManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.view.View;
+import android.webkit.GeolocationPermissions;
+import android.webkit.ValueCallback;
+import android.webkit.WebChromeClient;
 import android.webkit.WebStorage;
+import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import androidx.annotation.RequiresApi;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -28,6 +36,7 @@ public class FlutterWebView implements PlatformView, MethodCallHandler {
   private final MethodChannel methodChannel;
   private final FlutterWebViewClient flutterWebViewClient;
   private final Handler platformThreadHandler;
+  Context context1;
 
   @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
   @SuppressWarnings("unchecked")
@@ -43,6 +52,35 @@ public class FlutterWebView implements PlatformView, MethodCallHandler {
         (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
     displayListenerProxy.onPreWebViewInitialization(displayManager);
     webView = new InputAwareWebView(context, containerView);
+    /**
+     * start
+     * */
+    context1 = context;
+    webView.setWebChromeClient(new WebChromeClient(){
+      @Override
+      public boolean onShowFileChooser(
+              WebView webView, ValueCallback<Uri[]> filePathCallback,
+              FileChooserParams fileChooserParams) {
+
+        //成功跳转newActivity！！！很 nice
+        //跳转到newActivity去打开文件夹的操作
+        Intent intent = new Intent(context1,newActivity.class);
+        newActivity.getfilePathCallback(filePathCallback);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context1.startActivity(intent);
+        return true;
+      }
+
+      public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
+        callback.invoke(origin, true, false);
+      }
+
+    });
+
+
+    /**
+     * end
+     * */
     displayListenerProxy.onPostWebViewInitialization(displayManager);
 
     platformThreadHandler = new Handler(context.getMainLooper());
@@ -206,6 +244,7 @@ public class FlutterWebView implements PlatformView, MethodCallHandler {
     result.success(webView.getUrl());
   }
 
+  @RequiresApi(api = Build.VERSION_CODES.KITKAT)
   @SuppressWarnings("unchecked")
   private void updateSettings(MethodCall methodCall, Result result) {
     applySettings((Map<String, Object>) methodCall.arguments);
@@ -254,6 +293,7 @@ public class FlutterWebView implements PlatformView, MethodCallHandler {
     result.success(webView.getTitle());
   }
 
+  @RequiresApi(api = Build.VERSION_CODES.KITKAT)
   private void applySettings(Map<String, Object> settings) {
     for (String key : settings.keySet()) {
       switch (key) {
@@ -297,6 +337,7 @@ public class FlutterWebView implements PlatformView, MethodCallHandler {
     }
   }
 
+  @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
   private void updateAutoMediaPlaybackPolicy(int mode) {
     // This is the index of the AutoMediaPlaybackPolicy enum, index 1 is always_allow, for all
     // other values we require a user gesture.
