@@ -54,6 +54,7 @@ public class FlutterWebView implements PlatformView, MethodCallHandler {
     webView = new InputAwareWebView(context, containerView);
     /**
      * start
+     * input='file'
      * */
     context1 = context;
     webView.setWebChromeClient(new WebChromeClient(){
